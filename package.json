@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
+    "postbuild": "echo maabhawaniconstruction.info > dist/CNAME",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
