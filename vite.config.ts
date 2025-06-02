@@ -7,7 +7,7 @@ import { resolve } from 'path'
 
 const repoName = "bhawani_construction";
 export default defineConfig(({ mode }) => ({
-  base: '/bhawani_construction/',
+  base: '/',
   server: {
     host: "::",
     port: 8080,
