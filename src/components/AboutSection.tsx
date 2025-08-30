@@ -82,7 +82,7 @@ const AboutSection = () => {
         <h2 className="section-title">
           About <span className="text-construction-blue">Us</span>
         </h2>
-        <p className="section-subtitle">Building excellence since 2020</p>
+        <p className="section-subtitle">Building excellence since 2014</p>
 
         <div
           ref={sectionRef}
@@ -123,14 +123,13 @@ const AboutSection = () => {
             </p>
             <p className="mb-6">
               We specialize in providing comprehensive construction services
-              including fabrication, erection, fireproofing, roofing & cladding,
-              civil works, and solar system installation.
+              including construction of commercial project ,construction of Residensial project including fabrication,and all civil related Works.
             </p>
 
             <div className="grid grid-cols-2 gap-4">
-              <CounterBox target={25} label="Years of Experience" />
-              <CounterBox target={500} label="Projects Completed" />
-              <CounterBox target={300} label="Professional Team" />
+              <CounterBox target={10} label="Years of Experience" />
+              <CounterBox target={50} label="Projects Completed" />
+              <CounterBox target={100} label="Professional Team" />
               <CounterBox target={50} label="Industry Awards" />
             </div>
           </div>

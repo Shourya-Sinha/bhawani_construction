@@ -4,16 +4,16 @@ import { Factory, Building, Flame, House, Shovel, Sun } from "lucide-react";
 const services = [
   {
     id: 1,
-    title: "Fabrication",
+    title: "Industrial & Commercial Con.",
     description:
-      "Custom metal fabrication and structural steel manufacturing for various industrial applications.",
+      "Hands-on experience with Mivan board, Nova board, and RMD board formwork systems.",
     icon: Factory,
   },
   {
     id: 2,
-    title: "Erection",
+    title: "Modern Office Building",
     description:
-      "Expert installation and erection of steel structures, ensuring stability and durability.",
+     "Corporate headquarters with distinctive architectural cladding and advanced civil engineering.",
     icon: Building,
   },
   {
@@ -25,9 +25,9 @@ const services = [
   },
   {
     id: 4,
-    title: "Roofing & Cladding",
+    title: "Complete Solution",
     description:
-      "High-quality roofing and cladding services for commercial and industrial buildings.",
+      "Capable of delivering turnkey solutions from structure to final finishing, ensuring quality and timely completion.",
     icon: House,
   },
   {
@@ -39,9 +39,9 @@ const services = [
   },
   {
     id: 6,
-    title: "Solar System Installation",
+    title: "Finishing Works",
     description:
-      "Professional installation of solar power systems for sustainable energy solutions.",
+       "Lead an expert finishing team specialized in plastering, putty filling, and interior finishing works.",
     icon: Sun,
   },
 ];
