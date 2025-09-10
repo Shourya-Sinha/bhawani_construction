@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const SERVER_URL = 'http://localhost:7000';
+export const SERVER_URL = 'https://bhawani-constuction-server.onrender.com';
 
 export const GET_HERO_SECTION_DATA = `${SERVER_URL}/get-hero-section-data`;
 
