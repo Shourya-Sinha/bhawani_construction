@@ -1,44 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { GetClientSectionData } from "../constant/Constant";
 
-const clients = [
-  {
-    id: 1,
-    name: "Kean Corporation",
-    logo: "https://ik.imagekit.io/p66ljstle/Construction%20Assets/KEAN-removebg-preview.png?updatedAt=1746793773995",
-    quote:
-      "BHAWANI CON. delivered our factory expansion project on time and within budget. Their attention to detail was impressive.",
-  },
-  {
-    id: 2,
-    name: "Shine Industries",
-    logo: "https://ik.imagekit.io/p66ljstle/Construction%20Assets/SHINE-removebg-preview.png?updatedAt=1746793772876",
-    quote:
-      "We've worked with BHAWANI CON. on multiple projects. Their team consistently delivers quality work and innovative solutions.",
-  },
-  {
-    id: 3,
-    name: "Global Energy Ltd",
-    logo: "https://ik.imagekit.io/p66ljstle/Construction%20Assets/GLOBAL-removebg-preview.png?updatedAt=1746793774405",
-    quote:
-      "The solar installation by BHAWANI CON. has significantly reduced our energy costs. Professional service from start to finish.",
-  },
-  {
-    id: 4,
-    name: "Metro Developments",
-    logo: "https://ik.imagekit.io/p66ljstle/Construction%20Assets/metro-removebg-preview.png?updatedAt=1746793772758",
-    quote:
-      "BHAWANI CON.'s civil works team provided exceptional service for our commercial development. Highly recommended.",
-  },
-  {
-    id: 5,
-    name: "InnoTech Systems",
-    logo: "https://ik.imagekit.io/p66ljstle/Construction%20Assets/inno-removebg-preview.png?updatedAt=1746793772843",
-    quote:
-      "The fireproofing solution installed by BHAWANI CON. gives us peace of mind about our facility's safety.",
-  },
-];
-
+interface ClientItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+}
+interface ClientData {
+  secTtileSecond: string;
+  secTtileFirst: string;
+  subHeadings: string;
+  _id: string;
+  clients: ClientItem[];
+}
 const ClientsSection = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [clientData, setClientData] = useState<ClientData | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,6 +46,70 @@ const ClientsSection = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        setError(null);
+        const response = await GetClientSectionData();
+
+        // extract only the clientDataXxx keys
+        const clientKeys = Object.keys(response).filter((key) =>
+          key.startsWith("clientData")
+        );
+
+        const clientItems: ClientItem[] = clientKeys.map((key) => {
+          const item = response[key];
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.desc,
+            image: item.firstLogo?.url || "", // adjust if needed
+          };
+        });
+
+        setClientData({
+          secTtileFirst: response.secTtileFirst,
+          secTtileSecond: response.secTtileSecond,
+          subHeadings: response.subHeadings,
+          _id: response._id,
+          clients: clientItems,
+        });
+      } catch (err: any) {
+        setError(err.message || "Error fetching client data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <section
+        id="about"
+        className="flex items-center justify-center min-h-[400px]"
+      >
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        id="about"
+        className="flex items-center justify-center min-h-[400px]"
+      >
+        <p className="text-red-500">{error}</p>
+      </section>
+    );
+  }
+
+  if (!clientData) {
+    return null; // nothing to show, but safe
+  }
+
   return (
     <section
       id="clients"
@@ -78,19 +121,23 @@ const ClientsSection = () => {
     >
       <div className="section-container" ref={sectionRef}>
         <h2 className="section-title">
-          Our <span className="text-construction-red">Clients</span>
+          {/* Our  */}{clientData.secTtileFirst}{" "}
+          <span className="text-construction-red">
+            {/* Clients */}
+             {clientData.secTtileSecond}
+            </span>
         </h2>
         <p className="section-subtitle">
-          Companies who trust our expertise and services
+          {/* Companies who trust our expertise and services */}{clientData.subHeadings}
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-16">
-          {clients.map((client) => (
+          {clientData.clients.map((client) => (
             <div
               key={client.id}
               className="client-item reveal-on-scroll bg-white p-4 rounded-lg shadow-md flex items-center justify-center"
             >
-              <img src={client.logo} alt={client.name} className="max-h-16" />
+              <img src={client.image} alt={client.title} className="max-h-16" />
             </div>
           ))}
         </div>
@@ -100,7 +147,7 @@ const ClientsSection = () => {
         </h3>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clients.map((client, index) => (
+          {clientData.clients.map((client) => (
             <div
               key={`quote-${client.id}`}
               className="group client-item reveal-on-scroll bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg"
@@ -115,9 +162,9 @@ const ClientsSection = () => {
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
               </div>
-              <p className="mb-4 italic">{client.quote}</p>
+              <p className="mb-4 italic">{client.description}</p>
               <div className="font-medium transition-all duration-300 group-hover:text-[#d22630]">
-                {client.name}
+                 {client.title}
               </div>
             </div>
           ))}

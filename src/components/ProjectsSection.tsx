@@ -1,75 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { GetProjectSectionData } from "../constant/Constant";
 
-const projects = [
-  {
-    id: 1,
-    title: "Industrial & Commercial Construction",
-    category: "Construction",
-    description:
-      "Hands-on experience with Mivan board, Nova board, and RMD board formwork systems.",
-    image:
-      "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80", // factory / industrial site
-  },
-  {
-    id: 2,
-    title: "Modern Office Building",
-    category: "Civil Works & Cladding",
-    description:
-      "Corporate headquarters with distinctive architectural cladding and advanced civil engineering.",
-    image:
-       "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=800&q=80", // modern building
-  },
-  {
-    id: 3,
-    title: "Complete Turnkey Solution",
-    category: "Turnkey Projects",
-    description:
-      "Capable of delivering turnkey solutions from structure to final finishing, ensuring quality and timely completion.",
-    image:
-      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80", // generic construction solution
-  },
-  {
-    id: 4,
-    title: "Industrial Fireproofing",
-    category: "Fireproofing",
-    description:
-      "Comprehensive fireproofing solutions to protect structures and ensure compliance with safety standards.",
-    image:
-      "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?auto=format&fit=crop&w=800&q=80", // industrial site
-  },
-  {
-    id: 5,
-    title: "Finishing Works",
-    category: "Finishing",
-    description:
-      "Lead an expert finishing team specialized in plastering, putty filling, and interior finishing works.",
-    image:
-      "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=800&q=80", // interior finishing
-  },
-  {
-    id: 6,
-    title: "Civil Works Development",
-    category: "Civil Works",
-    description:
-      "Complete civil engineering and construction services for foundations, infrastructure, and more.",
-    image:
-      "https://images.unsplash.com/photo-1527596428173-1aa3d1bdaa3f?auto=format&fit=crop&w=800&q=80", // infrastructure
-  },
-];
+interface ProjectItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string; // or the correct type for your image
+}
+interface ProjectData {
+  secTitleSec: string;
+  secTtileFirst: string;
+  secSubHeding: string;
+  _id: string;
+  projects: ProjectItem[];
+}
 
 const ProjectsSection = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [projectData, setProjecteData] = useState<ProjectData | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const listRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
   const projectsPerPage = 3;
 
-  const totalPages = Math.ceil(projects.length / projectsPerPage);
-  const displayedProjects = projects.slice(
-    currentPage * projectsPerPage,
-    (currentPage + 1) * projectsPerPage
-  );
+  const totalPages = Math.ceil(projectData?.projects.length / projectsPerPage);
+  // const displayedProjects = projects.slice(
+  //   currentPage * projectsPerPage,
+  //   (currentPage + 1) * projectsPerPage
+  // );
+
+  const displayedProjects =
+    projectData?.projects.slice(
+      currentPage * projectsPerPage,
+      (currentPage + 1) * projectsPerPage
+    ) || [];
 
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
@@ -106,14 +74,77 @@ const ProjectsSection = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        setError(null);
+        const response = await GetProjectSectionData();
+        const projectKeys = Object.keys(response).filter((key) =>
+          key.startsWith("secData")
+        );
+        const projectItems: ProjectItem[] = projectKeys.map((key) => {
+          const item = response[key];
+          return {
+            id: item.id,
+            title: item.title,
+            category: item.category,
+            description: item.desc,
+            image: item.dataImage?.url || item.firstImage?.url || "", // adjust based on your structure
+          };
+        });
+        setProjecteData({
+          ...response,
+          projects: projectItems,
+        });
+      } catch (error) {
+        console.log("error while fetching", error);
+        setError(error)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+  // console.log("response data", projectData);
+
+  if (loading) {
+    return (
+      <section
+        id="about"
+        className="flex items-center justify-center min-h-[400px]"
+      >
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        id="about"
+        className="flex items-center justify-center min-h-[400px]"
+      >
+        <p className="text-red-500">{error}</p>
+      </section>
+    );
+  }
+
+  if (!projectData) {
+    return null; // nothing to show, but safe
+  }
+
   return (
     <section id="projects" className="py-16 md:py-24 bg-white">
       <div className="section-container" ref={sectionRef}>
         <h2 className="section-title">
-          Featured <span className="text-construction-blue">Projects</span>
+          {/* Featured */}{projectData?.secTtileFirst || ""} &nbsp;
+           <span className="text-construction-blue">
+            {/* Projects */}{projectData?.secTitleSec || ""}
+            </span>
         </h2>
         <p className="section-subtitle">
-          Discover our portfolio of successful construction projects
+          {/* Discover our portfolio of successful construction projects */} {projectData?.secSubHeding || ""}
         </p>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -148,7 +179,10 @@ const ProjectsSection = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-12 space-x-4" ref={listRef}>
+          <div
+            className="flex justify-center items-center mt-12 space-x-4"
+            ref={listRef}
+          >
             <Button
               onClick={prevPage}
               variant="outline"
