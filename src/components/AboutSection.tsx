@@ -98,13 +98,19 @@ const AboutSection = () => {
       try { // start loading
         setError(null); // clear any old error
         const response = await GetAboutSectionData();
-        // console.log("response", response);
-        setAboutData(response);
+        console.log("response", response);
+        // setAboutData(response.data);
+        if (response) {
+          setAboutData(response);
+        } else {
+          setError("No about section data received");
+        }
       } catch (error) {
-        console.log("error in fetching", error);
+        console.error("error in fetching", error);
+        setError("Failed to fetch about section");
       } finally {
-      setLoading(false);       // stop loading
-    }
+        setLoading(false);       // stop loading
+      }
     };
     fetchData();
   }, []);
