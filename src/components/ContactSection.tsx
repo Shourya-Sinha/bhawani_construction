@@ -313,7 +313,7 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-medium">Email</h4>
                     <p>
-                      support@bhawaniconstruction.in
+                      {/* support@bhawaniconstruction.in */}
                       {contactData?.email || ""}
                     </p>
                   </div>
